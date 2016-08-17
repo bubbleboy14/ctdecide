@@ -1,5 +1,20 @@
 decide.core.util = {
+	_newProp: "<b>New Proposal</b>",
+	proposer: function(node) {
+		CT.dom.setContent(node || decide.core.util._content, [
+			CT.dom.node("New Proposal", "div", "biggest bold padded"),
+			CT.dom.node([
+				CT.dom.node("name", "div", "bigger"),
+				CT.dom.field(null, null, "w1 block"),
+				CT.dom.node("description", "div", "bigger"),
+				CT.dom.textArea(null, null, "w1 block"),
+				CT.dom.button("Submit")
+			], "div", "round bordered padded")
+		]);
+	},
 	proposal: function(prop) {
+		if (prop.label == decide.core.util._newProp)
+			return decide.core.util.proposer();
 		var votes = CT.dom.node, objections = CT.dom.node();
 		CT.dom.setContent(decide.core.util._content, [
 			CT.dom.node(prop.name, "div", "biggest bold padded"),
@@ -33,6 +48,9 @@ decide.core.util = {
 	proposals: function(parent) {
 		parent = parent || document.body;
 		decide.core.util.get.proposals(function(props) {
+			props.unshift({
+				label: decide.core.util._newProp
+			});
 			decide.core.util._content = CT.dom.node();
 			CT.dom.setContent(parent, [
 				CT.panel.triggerList(props, decide.core.util.proposal),
