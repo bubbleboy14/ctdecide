@@ -1,14 +1,19 @@
 decide.core.util = {
 	_newProp: "<b>New Proposal</b>",
 	proposer: function(node) {
+		var name = CT.dom.field(null, null, "w1 block"),
+			description = CT.dom.textArea(null, null, "w1 block");
 		CT.dom.setContent(node || decide.core.util._content, [
 			CT.dom.node("New Proposal", "div", "biggest bold padded"),
 			CT.dom.node([
 				CT.dom.node("name", "div", "bigger"),
-				CT.dom.field(null, null, "w1 block"),
+				name,
 				CT.dom.node("description", "div", "bigger"),
-				CT.dom.textArea(null, null, "w1 block"),
-				CT.dom.button("Submit")
+				description,
+				CT.dom.button("Submit", function() {
+					if (!name.value || !description.value)
+						return alert("please provide name and description");
+				})
 			], "div", "round bordered padded")
 		]);
 	},
@@ -23,7 +28,7 @@ decide.core.util = {
 				"Yup" : "Nope"), "div", "bold padded"),
 			votes, objections
 		]);
-		decide.core.util.get.objections(function(objs) {
+		decide.core.db.objections(function(objs) {
 			objs.length && CT.dom.setContent(objections, [
 				CT.dom.node("Objections", "div", "bigger bold padded"),
 				objs.map(function(obj) {
@@ -34,7 +39,7 @@ decide.core.util = {
 				})
 			]);
 		}, prop);
-		decide.core.util.get.votes(function(data) {
+		decide.core.db.votes(function(data) {
 			var vnode = CT.dom.node("replace with yup/nope buttons OR how you voted (requires ctuser integration)");
 			CT.dom.setContent(votes, [
 				CT.dom.node("Votes", "div", "bigger bold padded"),
@@ -47,7 +52,7 @@ decide.core.util = {
 	},
 	proposals: function(parent) {
 		parent = parent || document.body;
-		decide.core.util.get.proposals(function(props) {
+		decide.core.db.proposals(function(props) {
 			props.unshift({
 				label: decide.core.util._newProp
 			});
@@ -59,23 +64,3 @@ decide.core.util = {
 		});
 	}
 };
-
-decide.core.util.get = {
-	votes: function(cb, prop) {
-		var params = { action: "votes", proposal: prop.key },
-			u = user.core.get();
-		if (u) params.user = u;
-		CT.net.post("/_decide", params, null, cb);
-	},
-	objections: function(cb, prop) {
-		CT.db.get("objection", cb, null, null, null, {
-			proposal: prop.key,
-			closed: false
-		});
-	},
-	proposals: function(cb, limit, offset, order, filters, sync) {
-		return CT.db.get("proposal", cb, limit, offset, order, filters, sync);
-	}
-};
-
-CT.db.setLimit(1000);
