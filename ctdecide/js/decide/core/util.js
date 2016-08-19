@@ -56,10 +56,11 @@ decide.core.util = {
 			props.unshift({
 				label: decide.core.util._newProp
 			});
-			decide.core.util._content = CT.dom.node();
+			decide.core.util._content = CT.dom.node(null, null, "ctdecide_content");
+			var tlist = CT.panel.triggerList(props, decide.core.util.proposal);
+			tlist.classList.add("ctdecide_list");
 			CT.dom.setContent(parent, [
-				CT.panel.triggerList(props, decide.core.util.proposal),
-				decide.core.util._content
+				tlist, decide.core.util._content
 			]);
 		});
 	}
