@@ -1,5 +1,5 @@
 from cantools import config
-from ctdecide_model import *
+from ctdecide.model import *
 cfg = config.ctdecide
 
 def passed(proposal):

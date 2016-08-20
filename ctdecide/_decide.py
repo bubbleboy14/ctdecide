@@ -1,7 +1,7 @@
 from cantools.web import respond, succeed, fail, cgi_get
 from cantools import config
+from ctdecide.util import vote, count
 from model import db, Proposal, Objection, Vote
-from util import vote, count
 
 def response():
     action = cgi_get("action", choices=["propose", "object", "vote", "votes"])
