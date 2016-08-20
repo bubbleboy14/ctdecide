@@ -13,6 +13,20 @@ decide.core.util = {
 				CT.dom.button("Submit", function() {
 					if (!name.value || !description.value)
 						return alert("please provide name and description");
+					var props = {
+						name: name.value,
+						description: description.value
+					};
+					CT.net.post("/_decide", CT.merge({
+						action: "propose"
+					}, props), null, function(key) {
+						props.key = key;
+						props.label = props.name;
+						var t = CT.panel.trigger(props, decide.core.util.proposal);
+						decide.core.util._list.insertBefore(t,
+							decide.core.util._list.firstChild.nextSibling);
+						t.trigger();
+					});
 				})
 			], "div", "round bordered padded")
 		]);
@@ -57,10 +71,10 @@ decide.core.util = {
 				label: decide.core.util._newProp
 			});
 			decide.core.util._content = CT.dom.node(null, null, "ctdecide_content");
-			var tlist = CT.panel.triggerList(props, decide.core.util.proposal);
-			tlist.classList.add("ctdecide_list");
+			decide.core.util._list = CT.panel.triggerList(props, decide.core.util.proposal);
+			decide.core.util._list.classList.add("ctdecide_list");
 			CT.dom.setContent(parent, [
-				tlist, decide.core.util._content
+				decide.core.util._list, decide.core.util._content
 			]);
 		});
 	}
