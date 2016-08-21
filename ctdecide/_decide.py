@@ -5,7 +5,7 @@ from model import db, Proposal, Objection, Vote
 
 def response():
     action = cgi_get("action", choices=["propose", "object", "vote", "votes"])
-    user = cgi_get("user", required=False)
+    user = cgi_get("user")
     if action == "propose":
         prop = Proposal(user=user, name=cgi_get("name"),
             description=cgi_get("description"))
@@ -20,13 +20,6 @@ def response():
     elif action == "vote":
         vote(user, proposal, cgi_get("position"))
     elif action == "votes":
-        proposal = cgi_get("proposal")
-        obj = count(proposal)
-        if user:
-            v = Vote.query(Vote.user == user,
-                Vote.proposal == proposal).get()
-            if v:
-                obj["user"] = v.position
-        succeed(obj)
+        succeed(count(proposal, user))
 
 respond(response)
