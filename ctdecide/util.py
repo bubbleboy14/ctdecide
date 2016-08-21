@@ -1,3 +1,4 @@
+from cantools.web import fail
 from cantools import config
 from ctdecide.model import *
 cfg = config.ctdecide
@@ -20,14 +21,24 @@ def passed(proposal):
 	return False
 
 def vote(user, proposal, position):
+	existing = Vote.query(Vote.user == user,
+		Vote.proposal == proposal).get()
+	if existing:
+		fail("you already voted!")
 	Vote(user=user, proposal=proposal, position=position).put()
-	if passed(proposal):
+	if passed(proposal.get()):
 		pass # do whatever -- email peeps?
 
-def count(proposal):
-	return {
+def count(proposal, user=None):
+	d = {
 		"yup": Vote.query(Vote.proposal == proposal,
 			Vote.position == False).count(),
 		"nope": Vote.query(Vote.proposal == proposal,
 			Vote.position == True).count()
 	}
+	if user:
+		uvote = Vote.query(Vote.user == user,
+			Vote.proposal == proposal).get()
+		if uvote:
+			d["user"] = uvote.position
+	return d
