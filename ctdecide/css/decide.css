@@ -12,3 +12,25 @@
 	left: 200px;
 	right: 10px;
 }
+
+.yup {
+	color: white;
+	background: green;
+	border: 1px solid green;
+	padding: 10px;
+	margin: 10px;
+	border-radius: 15px;
+	font-size: 160%;
+	font-weight: bold;
+}
+
+.nope {
+	color: white;
+	background: red;
+	border: 1px solid red;
+	padding: 10px;
+	margin: 10px;
+	border-radius: 15px;
+	font-size: 160%;
+	font-weight: bold;
+}
