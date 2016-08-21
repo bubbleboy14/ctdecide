@@ -1,14 +1,21 @@
 decide.core.db = {
 	votes: function(cb, prop) {
-		var params = { action: "votes", proposal: prop.key },
-			u = user.core.get();
-		if (u) params.user = u;
-		CT.net.post("/_decide", params, null, cb);
+		CT.net.post("/_decide", {
+			action: "votes",
+			proposal: prop.key,
+			user: decide.core.util._user.key
+		}, null, cb);
 	},
 	objections: function(cb, prop) {
 		CT.db.get("objection", cb, null, null, null, {
-			proposal: prop.key,
-			closed: false
+			proposal: {
+				value: prop.key,
+				comparator: "=="
+			},
+			closed: {
+				value: false,
+				comparator: "=="
+			}
 		});
 	},
 	proposals: function(cb, limit, offset, order, filters, sync) {
