@@ -32,9 +32,9 @@ def vote(user, proposal, position):
 def count(proposal, user=None):
 	d = {
 		"yup": Vote.query(Vote.proposal == proposal,
-			Vote.position == False).count(),
+			Vote.position == True).count(),
 		"nope": Vote.query(Vote.proposal == proposal,
-			Vote.position == True).count()
+			Vote.position == False).count()
 	}
 	if user:
 		uvote = Vote.query(Vote.user == user,
