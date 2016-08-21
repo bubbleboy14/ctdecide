@@ -4,7 +4,7 @@ decide.core.util = {
 		var name = CT.dom.field(null, null, "w1 block"),
 			description = CT.dom.textArea(null, null, "w1 block");
 		CT.dom.setContent(node || decide.core.util._content, [
-			CT.dom.node("New Proposal", "div", "biggest bold padded"),
+			CT.dom.node("New Proposal", "div", "biggest bold pv10"),
 			CT.dom.node([
 				CT.dom.node("name", "div", "bigger"),
 				name,
@@ -34,35 +34,67 @@ decide.core.util = {
 	proposal: function(prop) {
 		if (prop.label == decide.core.util._newProp)
 			return decide.core.util.proposer();
-		var votes = CT.dom.node, objections = CT.dom.node();
+		var votes = CT.dom.node(), objections = CT.dom.node();
 		CT.dom.setContent(decide.core.util._content, [
-			CT.dom.node(prop.name, "div", "biggest bold padded"),
-			CT.dom.node(prop.description, "div", "padded"),
+			CT.dom.node(prop.name, "div", "biggest bold pv10"),
+			prop.description,
 			CT.dom.node("Final: " + (prop.final ?
-				"Yup" : "Nope"), "div", "bold padded"),
+				"Yup" : "Nope"), "div", "bold pv10"),
 			votes, objections
 		]);
 		decide.core.db.objections(function(objs) {
 			objs.length && CT.dom.setContent(objections, [
-				CT.dom.node("Objections", "div", "bigger bold padded"),
+				CT.dom.node("Objections", "div", "bigger bold pv10"),
 				objs.map(function(obj) {
 					return [
-						CT.dom.node(obj.name, "div", "big bold padded"),
-						CT.dom.node(obj.description, "div", "padded")
+						CT.dom.node(obj.name, "div", "big bold pv10"),
+						obj.description
 					];
 				})
 			]);
 		}, prop);
-		decide.core.db.votes(function(data) {
-			var vnode = CT.dom.node("replace with yup/nope buttons OR how you voted (requires ctuser integration)");
-			CT.dom.setContent(votes, [
-				CT.dom.node("Votes", "div", "bigger bold padded"),
+		var _countvotes = function(data) {
+			var content = [
+				CT.dom.node("Votes", "div", "bigger bold pv10"),
 				"Yup: " + data.yup,
 				"Nope: " + data.nope,
-				"Total: " + (data.yup + data.nope),
-				vnode
-			]);
-		}, prop);
+				"Total: " + (data.yup + data.nope)
+			];
+			if ("user" in data)
+				content.push("You: " + (data.user ? "yup" : "nope"));
+			else {
+				var vnode = CT.dom.node([
+					CT.dom.node("Vote", "div", "bigger bold pv10"),
+					CT.dom.button("Yup", function() {
+						CT.net.post("/_decide", {
+							action: "vote",
+							user: decide.core.util._user.key,
+							proposal: prop.key,
+							position: true
+						}, null, function() {
+							data.user = true;
+							data.yup += 1;
+							_countvotes(data);
+						});
+					}, "yup"),
+					CT.dom.button("Nope", function() {
+						CT.net.post("/_decide", {
+							action: "vote",
+							user: decide.core.util._user.key,
+							proposal: prop.key,
+							position: false
+						}, null, function() {
+							data.user = false;
+							data.nope += 1;
+							_countvotes(data);
+						});
+					}, "nope")
+				]);
+				content.push(vnode);
+			}
+			CT.dom.setContent(votes, content);
+		};
+		decide.core.db.votes(_countvotes, prop);
 	},
 	proposals: function(parent) {
 		parent = parent || document.body;
@@ -79,3 +111,4 @@ decide.core.util = {
 		});
 	}
 };
+decide.core.util._user = user.core.get();
