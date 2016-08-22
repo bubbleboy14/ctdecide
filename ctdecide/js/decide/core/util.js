@@ -15,7 +15,8 @@ decide.core.util = {
 						return alert("please provide name and description");
 					var props = {
 						name: name.value,
-						description: description.value
+						description: description.value,
+						user: decide.core.util._user.key
 					};
 					CT.net.post("/_decide", CT.merge({
 						action: "propose"
