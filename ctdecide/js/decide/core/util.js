@@ -23,9 +23,12 @@ decide.core.util = {
 					}, props), null, function(key) {
 						props.key = key;
 						props.label = props.name;
-						var t = CT.panel.trigger(props, decide.core.util.proposal);
-						decide.core.util._list.insertBefore(t,
-							decide.core.util._list.firstChild.nextSibling);
+						var tlist = decide.core.util._list;
+							t = CT.panel.trigger(props, decide.core.util.proposal);
+						if (tlist.firstChild.nextSibling)
+							tlist.insertBefore(t, tlist.firstChild.nextSibling);
+						else
+							tlist.appendChild(t);
 						t.trigger();
 					});
 				})
@@ -103,9 +106,9 @@ decide.core.util = {
 			props.unshift({
 				label: decide.core.util._newProp
 			});
-			decide.core.util._content = CT.dom.node(null, null, "ctdecide_content");
+			decide.core.util._content = CT.dom.node(null, null, "ctcontent");
 			decide.core.util._list = CT.panel.triggerList(props, decide.core.util.proposal);
-			decide.core.util._list.classList.add("ctdecide_list");
+			decide.core.util._list.classList.add("ctlist");
 			CT.dom.setContent(parent, [
 				decide.core.util._list, decide.core.util._content
 			]);

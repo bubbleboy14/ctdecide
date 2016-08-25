@@ -1,18 +1,3 @@
-.ctdecide_list {
-	position: absolute;
-	top: 10px;
-	bottom: 10px;
-	left: 10px;
-	width: 190px;
-}
-.ctdecide_content {
-	position: absolute;
-	top: 10px;
-	bottom: 10px;
-	left: 200px;
-	right: 10px;
-}
-
 .yup {
 	color: white;
 	background: green;
