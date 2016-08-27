@@ -8,14 +8,8 @@ decide.core.db = {
 	},
 	objections: function(cb, prop) {
 		CT.db.get("objection", cb, null, null, null, {
-			proposal: {
-				value: prop.key,
-				comparator: "=="
-			},
-			closed: {
-				value: false,
-				comparator: "=="
-			}
+			proposal: prop.key,
+			closed: false
 		});
 	},
 	proposals: function(cb, limit, offset, order, filters, sync) {
