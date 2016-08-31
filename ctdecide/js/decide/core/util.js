@@ -112,6 +112,7 @@ decide.core.util = {
 			CT.dom.setContent(parent, [
 				decide.core.util._list, decide.core.util._content
 			]);
+			decide.core.util._list.firstChild.trigger();
 		});
 	}
 };
