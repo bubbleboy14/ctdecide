@@ -8,7 +8,7 @@ syms = {
 	".": ["_decide.py"],
 	"js": ["decide.js", "decide"],
 	"css": ["decide.css"],
-	"html": ["decide.html"]
+	"html": ["decide"]
 }
 model = {
 	"ctdecide.model": ["*"]
