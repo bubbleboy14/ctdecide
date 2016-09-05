@@ -1,9 +1,5 @@
 import config
 
-copies = {
-	"css": ["custom.css"]
-}
-
 syms = {
 	".": ["_decide.py"],
 	"js": ["decide.js", "decide"],
