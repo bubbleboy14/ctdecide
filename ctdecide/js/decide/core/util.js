@@ -1,9 +1,13 @@
 decide.core.util = {
-	_newProp: "<b>New Proposal</b>",
+	_: {
+		user: user.core.get(),
+		newProp: "<b>New Proposal</b>"
+	},
 	proposer: function(node) {
-		var name = CT.dom.field(null, null, "w1 block"),
+		var _ = decide.core.util._,
+			name = CT.dom.field(null, null, "w1 block"),
 			description = CT.dom.textArea(null, null, "w1 block");
-		CT.dom.setContent(node || decide.core.util._content, [
+		CT.dom.setContent(node || _.content, [
 			CT.dom.node("New Proposal", "div", "biggest bold pv10"),
 			CT.dom.node([
 				CT.dom.node("name", "div", "bigger"),
@@ -16,14 +20,14 @@ decide.core.util = {
 					var props = {
 						name: name.value,
 						description: description.value,
-						user: decide.core.util._user.key
+						user: _.user.key
 					};
 					CT.net.post("/_decide", CT.merge({
 						action: "propose"
 					}, props), null, function(key) {
 						props.key = key;
 						props.label = props.name;
-						var tlist = decide.core.util._list;
+						var tlist = _.list;
 							t = CT.panel.trigger(props, decide.core.util.proposal);
 						if (tlist.firstChild.nextSibling)
 							tlist.insertBefore(t, tlist.firstChild.nextSibling);
@@ -36,10 +40,11 @@ decide.core.util = {
 		]);
 	},
 	proposal: function(prop) {
-		if (prop.label == decide.core.util._newProp)
+		var _ = decide.core.util._;
+		if (prop.label == _.newProp)
 			return decide.core.util.proposer();
 		var votes = CT.dom.node(), objections = CT.dom.node();
-		CT.dom.setContent(decide.core.util._content, [
+		CT.dom.setContent(_.content, [
 			CT.dom.node(prop.name, "div", "biggest bold pv10"),
 			prop.description,
 			CT.dom.node("Final: " + (prop.final ?
@@ -72,7 +77,7 @@ decide.core.util = {
 					CT.dom.button("Yup", function() {
 						CT.net.post("/_decide", {
 							action: "vote",
-							user: decide.core.util._user.key,
+							user: _.user.key,
 							proposal: prop.key,
 							position: true
 						}, null, function() {
@@ -84,7 +89,7 @@ decide.core.util = {
 					CT.dom.button("Nope", function() {
 						CT.net.post("/_decide", {
 							action: "vote",
-							user: decide.core.util._user.key,
+							user: _.user.key,
 							proposal: prop.key,
 							position: false
 						}, null, function() {
@@ -100,20 +105,21 @@ decide.core.util = {
 		};
 		decide.core.db.votes(_countvotes, prop);
 	},
-	proposals: function(parent) {
-		parent = parent || document.body;
-		decide.core.db.proposals(function(props) {
-			props.unshift({
-				label: decide.core.util._newProp
-			});
-			decide.core.util._content = CT.dom.node(null, null, "ctcontent");
-			decide.core.util._list = CT.panel.triggerList(props, decide.core.util.proposal);
-			decide.core.util._list.classList.add("ctlist");
-			CT.dom.setContent(parent, [
-				decide.core.util._list, decide.core.util._content
-			]);
-			decide.core.util._list.firstChild.trigger();
+	process: function(props) {
+		var _ = decide.core.util._;
+		props.unshift({
+			label: _.newProp
 		});
+		_.content = CT.dom.node(null, null, "ctcontent");
+		_.list = CT.panel.triggerList(props, decide.core.util.proposal);
+		_.list.classList.add("ctlist");
+		CT.dom.setContent(_.parent, [
+			_.list, _.content
+		]);
+		_.list.firstChild.trigger();
+	},
+	proposals: function(parent, proposals) {
+		decide.core.util._.parent = parent || document.body;
+		proposals ? decide.core.util.process(proposals) : decide.core.db.proposals(decide.core.util.process);
 	}
 };
-decide.core.util._user = user.core.get();
