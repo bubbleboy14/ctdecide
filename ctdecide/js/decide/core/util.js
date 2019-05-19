@@ -1,7 +1,11 @@
 decide.core.util = {
 	_: {
 		user: user.core.get(),
-		newProp: "<b>New Proposal</b>"
+		newProp: "<b>New Proposal</b>",
+		onNew: function() {}
+	},
+	onNew: function(cb) {
+		decide.core.util._.onNew = cb;
 	},
 	proposer: function(node) {
 		var _ = decide.core.util._,
@@ -34,6 +38,7 @@ decide.core.util = {
 						else
 							tlist.appendChild(t);
 						t.trigger();
+						_.onNew(key);
 					});
 				})
 			], "div", "round bordered padded")
