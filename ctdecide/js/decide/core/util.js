@@ -112,11 +112,10 @@ decide.core.util = {
 	},
 	process: function(props) {
 		var _ = decide.core.util._;
-		props.unshift({
-			label: _.newProp
-		});
 		_.content = CT.dom.node(null, null, "ctcontent");
-		_.list = CT.panel.triggerList(props, decide.core.util.proposal);
+		_.list = CT.panel.triggerList([{
+			label: _.newProp
+		}].concat(props), decide.core.util.proposal);
 		_.list.classList.add("ctlist");
 		CT.dom.setContent(_.parent, [
 			_.list, _.content
