@@ -3,7 +3,7 @@ decide.core.db = {
 		CT.net.post("/_decide", {
 			action: "votes",
 			proposal: prop.key,
-			user: decide.core.util._user.key
+			user: user.core.get("key")
 		}, null, cb);
 	},
 	objections: function(cb, prop) {
