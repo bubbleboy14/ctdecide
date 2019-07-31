@@ -1,4 +1,4 @@
-import config
+from . import config
 
 syms = {
 	".": ["_decide.py"],
