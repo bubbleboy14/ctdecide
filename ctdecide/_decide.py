@@ -1,7 +1,7 @@
 from cantools.web import respond, succeed, fail, cgi_get
 from cantools import config
 from ctdecide.util import vote, count
-from model import db, Proposal, Objection, Vote
+from model import db, Proposal, Objection, Vote, Conversation
 
 def response():
     action = cgi_get("action", choices=["propose", "object", "vote", "votes"])
@@ -9,6 +9,9 @@ def response():
     if action == "propose":
         prop = Proposal(user=user, name=cgi_get("name"),
             description=cgi_get("description"))
+        convo = Conversation(topic=prop.name)
+        convo.put()
+        prop.conversation = convo.key
         prop.put()
         succeed(prop.key.urlsafe())
     proposal = db.KeyWrapper(cgi_get("proposal"))
