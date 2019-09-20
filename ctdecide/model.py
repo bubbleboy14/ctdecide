@@ -2,6 +2,7 @@ from cantools import db
 
 class Proposal(db.TimeStampedBase):
     user = db.ForeignKey()
+    conversation = db.ForeignKey(kind="conversation") # from ctuser
     name = db.String()
     description = db.Text()
     final = db.Boolean(default=False)
