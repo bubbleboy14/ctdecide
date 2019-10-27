@@ -13,7 +13,7 @@ def response():
         convo.put()
         prop.conversation = convo.key
         prop.put()
-        succeed(prop.key.urlsafe())
+        succeed(prop.data())
     proposal = db.KeyWrapper(cgi_get("proposal"))
     if action == "object":
         obj = Objection(user=user, proposal=proposal,
