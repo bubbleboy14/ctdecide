@@ -12,7 +12,7 @@ decide.core.util = {
 			name = CT.dom.field(null, null, "w1 block"),
 			description = CT.dom.textArea(null, null, "w1 block");
 		CT.dom.setContent(node || _.content, [
-			CT.dom.node("New Proposal", "div", "biggest bold pv10"),
+			CT.dom.node("New Proposal", "div", "biggest bold pb10"),
 			CT.dom.node([
 				CT.dom.node("name", "div", "bigger"),
 				name,
