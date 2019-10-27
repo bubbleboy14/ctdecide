@@ -28,17 +28,15 @@ decide.core.util = {
 					};
 					CT.net.post("/_decide", CT.merge({
 						action: "propose"
-					}, props), null, function(key) {
-						props.key = key;
-						props.label = props.name;
+					}, props), null, function(data) {
 						var tlist = _.list;
-							t = CT.panel.trigger(props, decide.core.util.proposal);
+							t = CT.panel.trigger(data, decide.core.util.proposal);
 						if (tlist.firstChild.nextSibling)
 							tlist.insertBefore(t, tlist.firstChild.nextSibling);
 						else
 							tlist.appendChild(t);
 						t.trigger();
-						_.onNew(key);
+						_.onNew(data.key);
 					});
 				})
 			], "div", "round bordered padded")
