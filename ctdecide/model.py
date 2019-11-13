@@ -8,6 +8,7 @@ class Proposal(db.TimeStampedBase):
     conversation = db.ForeignKey(kind=Conversation)
     name = db.String()
     description = db.Text()
+    passed = db.Boolean(default=False)
 
     def votership(self):
         return CTUser.query().count()
@@ -15,21 +16,24 @@ class Proposal(db.TimeStampedBase):
     def onpass(self):
         pass # do whatever -- email peeps?
 
-    def passed(self):
-        total_users = self.votership()
-        total_votes = Vote.query(Vote.proposal == self.key).count()
-        yes_votes = Vote.query(Vote.proposal == self.key,
-            Vote.position == True).count()
-        if total_votes / float(total_users) >= cfg.thresholds.participation:
-            if cfg.mode == "democracy":
-                thresh = cfg.thresholds.majority
-            else: # consensus
-                thresh = 1
-                if Objection.query(Objection.proposal == self.key,
-                    Objection.closed == False).count():
-                    return False
-            return yes_votes / float(total_votes) >= thresh
-        return False
+    def ispassed(self):
+        if not self.passed:
+            total_users = self.votership()
+            total_votes = Vote.query(Vote.proposal == self.key).count()
+            yes_votes = Vote.query(Vote.proposal == self.key,
+                Vote.position == True).count()
+            if total_votes / float(total_users) >= cfg.thresholds.participation:
+                if cfg.mode == "democracy":
+                    thresh = cfg.thresholds.majority
+                else: # consensus
+                    thresh = 1
+                    if Objection.query(Objection.proposal == self.key,
+                        Objection.closed == False).count():
+                        return False
+                self.passed = yes_votes / float(total_votes) >= thresh
+                if self.passed:
+                    self.put()
+        return self.passed
 
     def vote(self, user, position):
         existing = Vote.query(Vote.user == user,
@@ -38,7 +42,7 @@ class Proposal(db.TimeStampedBase):
             from cantools.web import fail
             fail("you already voted!")
         Vote(user=user, proposal=self.key, position=position).put()
-        if self.passed():
+        if not self.passed and self.ispassed():
             self.onpass()
 
     def count(self, user=None):
