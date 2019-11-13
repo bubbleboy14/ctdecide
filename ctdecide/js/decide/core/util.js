@@ -42,17 +42,17 @@ decide.core.util = {
 			], "div", "round bordered padded")
 		]);
 	},
-	proposal: function(prop) {
+	proposal: function(prop, parent) {
 		var _ = decide.core.util._;
 		if (prop.label == _.newProp)
 			return decide.core.util.proposer();
 		var votes = CT.dom.div(), objections = CT.dom.div(),
 			convo = user.core.convo(prop.conversation);
-		CT.dom.setContent(_.content, [
+		CT.dom.setContent(parent || _.content, [
 			CT.dom.node(prop.name, "div", "biggest bold pb10"),
 			prop.description,
-			CT.dom.node("Final: " + (prop.final ?
-				"Yup" : "Nope"), "div", "bold pv10"),
+//			CT.dom.node("Final: " + (prop.final ?
+//				"Yup" : "Nope"), "div", "bold pv10"),
 			votes, objections, convo
 		]);
 		decide.core.db.objections(function(objs) {
