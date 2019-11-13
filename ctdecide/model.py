@@ -10,9 +10,15 @@ class Proposal(db.TimeStampedBase):
     description = db.Text()
     final = db.Boolean(default=False)
 
+    def votership(self):
+        return CTUser.query().count()
+
+    def onpass(self):
+        pass # do whatever -- email peeps?
+
     def passed(self):
         if self.final:
-            total_users = CTUser.query().count()
+            total_users = self.votership()
             total_votes = Vote.query(Vote.proposal == self.key).count()
             yes_votes = Vote.query(Vote.proposal == self.key,
                 Vote.position == True).count()
@@ -35,7 +41,7 @@ class Proposal(db.TimeStampedBase):
             fail("you already voted!")
         Vote(user=user, proposal=self.key, position=position).put()
         if self.passed():
-            pass # do whatever -- email peeps?
+            self.onpass()
 
     def count(self, user=None):
         d = {
