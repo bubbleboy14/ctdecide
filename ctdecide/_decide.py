@@ -1,6 +1,5 @@
 from cantools.web import respond, succeed, fail, cgi_get
 from cantools import config
-from ctdecide.util import vote, count
 from model import db, Proposal, Objection, Vote, Conversation
 
 def response():
@@ -14,15 +13,15 @@ def response():
         prop.conversation = convo.key
         prop.put()
         succeed(prop.data())
-    proposal = db.KeyWrapper(cgi_get("proposal"))
+    proposal = db.get(cgi_get("proposal"))
     if action == "object":
-        obj = Objection(user=user, proposal=proposal,
+        obj = Objection(user=user, proposal=proposal.key,
             name=cgi_get("name"), description=cgi_get("description"))
         obj.put()
         succeed(obj.key.urlsafe())
     elif action == "vote":
-        vote(user, proposal, cgi_get("position"))
+        proposal.vote(user, cgi_get("position"))
     elif action == "votes":
-        succeed(count(proposal, user))
+        succeed(proposal.count(user))
 
 respond(response)
