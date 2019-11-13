@@ -8,7 +8,6 @@ class Proposal(db.TimeStampedBase):
     conversation = db.ForeignKey(kind=Conversation)
     name = db.String()
     description = db.Text()
-    final = db.Boolean(default=False)
 
     def votership(self):
         return CTUser.query().count()
@@ -17,20 +16,19 @@ class Proposal(db.TimeStampedBase):
         pass # do whatever -- email peeps?
 
     def passed(self):
-        if self.final:
-            total_users = self.votership()
-            total_votes = Vote.query(Vote.proposal == self.key).count()
-            yes_votes = Vote.query(Vote.proposal == self.key,
-                Vote.position == True).count()
-            if total_votes / float(total_users) >= cfg.thresholds.participation:
-                if cfg.mode == "democracy":
-                    thresh = cfg.thresholds.majority
-                else: # consensus
-                    thresh = 1
-                    if Objection.query(Objection.proposal == self.key,
-                        Objection.closed == False).count():
-                        return False
-                return yes_votes / float(total_votes) >= thresh
+        total_users = self.votership()
+        total_votes = Vote.query(Vote.proposal == self.key).count()
+        yes_votes = Vote.query(Vote.proposal == self.key,
+            Vote.position == True).count()
+        if total_votes / float(total_users) >= cfg.thresholds.participation:
+            if cfg.mode == "democracy":
+                thresh = cfg.thresholds.majority
+            else: # consensus
+                thresh = 1
+                if Objection.query(Objection.proposal == self.key,
+                    Objection.closed == False).count():
+                    return False
+            return yes_votes / float(total_votes) >= thresh
         return False
 
     def vote(self, user, position):
