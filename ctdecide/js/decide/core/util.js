@@ -51,6 +51,8 @@ decide.core.util = {
 		CT.dom.setContent(parent || _.content, [
 			CT.dom.node(prop.name, "div", "biggest bold pb10"),
 			prop.description,
+			CT.dom.div("Passed: " + (prop.passed ?
+				"Yup" : "Nope"), "bold pv10"),
 //			CT.dom.node("Final: " + (prop.final ?
 //				"Yup" : "Nope"), "div", "bold pv10"),
 			votes, objections, convo
